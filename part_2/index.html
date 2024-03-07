@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Movie Rating App</title>
+<style src="index.css"></style>
+</head>
+<body>
+
+<form id="movie-form">
+    <label for="title">Title:</label>
+    <input type="text" id="title" required minlength="2"><br><br>
+    
+    <label for="rating">Rating:</label>
+    <input type="number" id="rating" required min="0" max="10"><br><br>
+    
+    <button type="submit">Add Movie</button>
+</form>
+
+<ul id="movie-list"></ul>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#movie-form').submit(function(event) {
+        event.preventDefault();
+        
+        var title = $('#title').val();
+        var rating = $('#rating').val();
+        
+        if (title.length < 2) {
+            alert("Title must be at least 2 characters long.");
+            return;
+        }
+        
+        if (rating < 0 || rating > 10) {
+            alert("Rating must be between 0 and 10.");
+            return;
+        }
+        
+        var listItem = $('<li>').text(title + ' - Rating: ' + rating);
+        var removeButton = $('<button>').text('Remove');
+        
+        removeButton.click(function() {
+            listItem.remove();
+        });
+        
+        listItem.append(removeButton);
+        $('#movie-list').append(listItem);
+        
+        // Clear form inputs
+        $('#title').val('');
+        $('#rating').val('');
+    });
+    
+    $('#sort-title').click(function() {
+        var list = $('#movie-list');
+        var items = list.children('li').get();
+        items.sort(function(a, b) {
+            var titleA = $(a).text().toUpperCase();
+            var titleB = $(b).text().toUpperCase();
+            return (titleA < titleB) ? -1 : (titleA > titleB) ? 1 : 0;
+        });
+        $.each(items, function(index, item) {
+            list.append(item);
+        });
+    });
+    
+    $('#sort-rating').click(function() {
+        var list = $('#movie-list');
+        var items = list.children('li').get();
+        items.sort(function(a, b) {
+            var ratingA = parseInt($(a).text().match(/\d+/)[0]);
+            var ratingB = parseInt($(b).text().match(/\d+/)[0]);
+            return ratingA - ratingB;
+        });
+        $.each(items, function(index, item) {
+            list.append(item);
+        });
+    });
+});
+</script>
+
+<button id="sort-title">Sort by Title</button>
+<button id="sort-rating">Sort by Rating</button>
+
+</body>
+</html>
